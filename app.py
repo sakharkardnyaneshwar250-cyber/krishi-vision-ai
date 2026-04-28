@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 import numpy as np
 import os
+import requests
 import razorpay
-
+"Authorization": "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"
 app = Flask(__name__)
 
 client = razorpay.Client(auth=("rzp_test_SifWo24DcJ7yuT", "iqd4FlZKPXFMutoA19Rhgitd"))
@@ -45,7 +46,6 @@ def index():
 def predict():
     try:
         file = request.files.get('file')
-        crop = request.form.get('crop')
 
         if not file:
             return "No file uploaded"
@@ -53,6 +53,38 @@ def predict():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
 
+        # 🔥 HuggingFace API
+        API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
+        
+        headers = {
+            "Authorization": "Bearer YOUR_API_KEY"
+        }
+
+        with open(filepath, "rb") as f:
+            response = requests.post(API_URL, headers=headers, data=f.read())
+
+        result = response.json()
+
+        # Safe handling
+        if isinstance(result, list):
+            disease = result[0]['label']
+            confidence = round(result[0]['score'] * 100, 2)
+        else:
+            disease = "Unknown"
+            confidence = 0
+
+        return render_template(
+            "output.html",
+            prediction=disease,
+            confidence=confidence,
+            treatment="Consult expert",
+            dose="-",
+            image_path=filepath,
+            product=None
+        )
+
+    except Exception as e:
+        return str(e)
         # 🔥 STABLE DEMO (NO AI → NO CRASH)
         disease = "Leaf Spot"
         confidence = 92
