@@ -208,15 +208,56 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    file = request.files['file']
-    crop = request.form['crop']
+    try:
+        file = request.files.get('file')
 
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filepath)
+        if not file:
+            return "No file uploaded ❌"
 
-    img = image.load_img(filepath, target_size=(150,150))
-    img_array = image.img_to_array(img)/255.0
-    img_array = np.expand_dims(img_array, axis=0)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filepath)
+
+        API_URL = "https://api-inference.huggingface.co/models/nateraw/vit-base-beans"
+
+        headers = {
+            "Authorization": "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"
+        }
+
+        response = requests.post(
+            API_URL,
+            headers=headers,
+            data=open(filepath, "rb").read()
+        )
+
+        # 🔥 DEBUG
+        print("STATUS:", response.status_code)
+        print("TEXT:", response.text)
+
+        # ❌ अगर API fail
+        if response.status_code != 200:
+            return f"API Error: {response.text}"
+
+        try:
+            result = response.json()
+        except:
+            return f"Invalid JSON: {response.text}"
+
+        # 🔥 SAFE RESULT
+        if isinstance(result, list) and len(result) > 0:
+            best = max(result, key=lambda x: x['score'])
+            disease = best['label']
+            confidence = round(best['score'] * 100, 2)
+        else:
+            return f"Unexpected API Response: {result}"
+
+        return render_template(
+            "output.html",
+            prediction=disease,
+            confidence=confidence
+        )
+
+    except Exception as e:
+        return f"Server Error: {str(e)}"
 
     # Model selection
     if crop == "cotton":
