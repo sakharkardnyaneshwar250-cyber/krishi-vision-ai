@@ -62,7 +62,23 @@ def predict():
         with open(filepath, "rb") as f:
             response = requests.post(API_URL, headers=headers, data=f.read())
 
-        result = response.json()
+        response = requests.post(
+    API_URL,
+    headers=headers,
+    data=open(filepath, "rb").read()
+)
+
+# 🔥 DEBUG
+print("STATUS:", response.status_code)
+print("TEXT:", response.text)
+
+if response.status_code != 200:
+    return f"API Error: {response.text}"
+
+try:
+    result = response.json()
+except:
+    return f"Invalid JSON: {response.text}"
 
         # Safe handling
         if isinstance(result, list):
