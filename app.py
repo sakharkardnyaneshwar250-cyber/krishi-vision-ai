@@ -5,6 +5,7 @@ import requests
 import razorpay
 app = Flask(__name__)
 
+
 client = razorpay.Client(auth=("rzp_test_SifWo24DcJ7yuT", "iqd4FlZKPXFMutoA19Rhgitd"))
 
 # ---------- PRODUCTS ----------
@@ -53,10 +54,10 @@ def predict():
         file.save(filepath)
 
         # 🔥 HuggingFace API
-        API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
+        API_URL = "https://api-inference.huggingface.co/models/nateraw/vit-base-beans"
         
         headers = {
-            "Authorization": "Bearer YOUR_API_KEY"
+            "Authorization": "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"
         }
 
         with open(filepath, "rb") as f:
