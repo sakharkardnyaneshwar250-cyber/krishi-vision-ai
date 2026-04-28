@@ -2,8 +2,6 @@ from flask import Flask, render_template, request
 import numpy as np
 import os
 import razorpay
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
 
 app = Flask(__name__)
 
@@ -54,9 +52,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ---------- LOAD MODELS ----------
-cotton_model = load_model("cotton_model.h5")
-soyabean_model = load_model("soyabean_model.h5")
-wheat_model = load_model("wheat_model.h5")
+# Dummy prediction (for deploy)
+disease = "Leaf Spot"
+confidence = 92
 
 # ---------- CLASS LABELS ----------
 cotton_classes = [
@@ -238,12 +236,12 @@ def predict():
         return "Invalid crop"
 
     # Prediction
-    prediction = model.predict(img_array)
-    class_index = np.argmax(prediction)
-    disease = classes[class_index]
-    confidence = round(100 * np.max(prediction), 2)
+   # Dummy prediction (Render compatible)
+    disease = "Leaf Spot"
+    confidence = 92.0
 
     treatment, dose = solutions.get(disease, ("Consult expert", "Not available"))
+
 
     # 🔥 PRODUCT FIND
     recommended_product = None
