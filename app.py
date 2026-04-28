@@ -42,61 +42,42 @@ def index():
     return render_template("index.html")
 
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         file = request.files.get('file')
-
         if not file:
-            return "No file uploaded"
+            return "No file"
 
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
 
-        # 🔥 HuggingFace API
         API_URL = "https://api-inference.huggingface.co/models/nateraw/vit-base-beans"
-        
+
         headers = {
-            "Authorization": "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"
+            "Authorization": "Bearer hf_YOURTOKEN"   # 👈 अपना token डाल
         }
 
-        with open(filepath, "rb") as f:
-            response = requests.post(API_URL, headers=headers, data=f.read())
-
         response = requests.post(
-    API_URL,
-    headers=headers,
-    data=open(filepath, "rb").read()
-)
+            API_URL,
+            headers=headers,
+            data=open(filepath, "rb").read()
+        )
 
-# 🔥 DEBUG
-print("STATUS:", response.status_code)
-print("TEXT:", response.text)
+        if response.status_code != 200:
+            return response.text
 
-if response.status_code != 200:
-    return f"API Error: {response.text}"
+        result = response.json()
 
-try:
-    result = response.json()
-except:
-    return f"Invalid JSON: {response.text}"
-
-        # Safe handling
-        if isinstance(result, list):
-            disease = result[0]['label']
-            confidence = round(result[0]['score'] * 100, 2)
-        else:
-            disease = "Unknown"
-            confidence = 0
+        best = max(result, key=lambda x: x['score'])
+        disease = best['label']
+        confidence = round(best['score'] * 100, 2)
 
         return render_template(
             "output.html",
             prediction=disease,
-            confidence=confidence,
-            treatment="Consult expert",
-            dose="-",
-            image_path=filepath,
-            product=None
+            confidence=confidence
         )
 
     except Exception as e:
