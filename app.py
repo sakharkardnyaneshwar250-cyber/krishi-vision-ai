@@ -1,3 +1,8 @@
+from flask import Flask, render_template, request
+import os
+import requests
+
+app = Flask(__name__)   # 👈 ये missing है तुम्हारे code में
 import requests  # 👈 जरूरी
 
 @app.route('/predict', methods=['POST'])
