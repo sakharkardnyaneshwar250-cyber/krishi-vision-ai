@@ -56,7 +56,7 @@ def predict():
         API_URL = "https://api-inference.huggingface.co/models/nateraw/vit-base-beans"
 
         headers = {
-            "Authorization": "Bearer hf_YOURTOKEN"   # 👈 अपना token डाल
+            "Authorization": "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"   # 👈 अपना token डाल
         }
 
         response = requests.post(
