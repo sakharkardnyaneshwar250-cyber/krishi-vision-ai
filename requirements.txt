@@ -1,5 +1,4 @@
 flask
 numpy
 pillow
-tflite-runtime==2.13.0
 razorpay
