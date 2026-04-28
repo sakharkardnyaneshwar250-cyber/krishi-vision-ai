@@ -3,7 +3,6 @@ import numpy as np
 import os
 import requests
 import razorpay
-"Authorization": "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"
 app = Flask(__name__)
 
 client = razorpay.Client(auth=("rzp_test_SifWo24DcJ7yuT", "iqd4FlZKPXFMutoA19Rhgitd"))
