@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Cart - Krishi Vision AI</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.header {
+    background: #2e7d32;
+    color: white;
+    padding: 15px;
+}
+
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn {
+    background: #2e7d32;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background: #1b5e20;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>🛒 Your Cart</h2>
+</div>
+
+<div class="container">
+    <div id="cart-items"></div>
+
+    <button class="btn" onclick="clearCart()">🗑 Clear Cart</button>
+
+    <a href="/">
+        <button class="btn">⬅ Back to Home</button>
+    </a>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let container = document.getElementById("cart-items");
+
+if(cart.length === 0){
+    container.innerHTML = "<p>Cart is empty 😔</p>";
+}else{
+    container.innerHTML = cart.map(id => `
+        <div class="card">
+            <p>Product ID: ${id}</p>
+        </div>
+    `).join("");
+}
+
+// Clear cart
+function clearCart() {
+    localStorage.removeItem("cart");
+    location.reload();
+}
+</script>
+
+</body>
+</html>

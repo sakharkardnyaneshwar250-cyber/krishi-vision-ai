@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Krishi Vision AI - Result</title>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #2e7d32;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    .container {
+        background: #f5f5f5;
+        margin: 20px auto;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+        color: #2e7d32;
+    }
+
+    img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        margin: 15px 0;
+    }
+
+    .box {
+        background: #e0e0e0;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    button {
+        flex: 1 1 45%;
+        padding: 10px;
+        border: none;
+        background: #43a047;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    button:hover {
+        background: #2e7d32;
+    }
+
+    .full-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+        button {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+</head>
+
+<body onload="speakResult()">
+
+<div class="container">
+    <h1>🌿 Krishi Vision AI</h1>
+    <h2>Prediction Result</h2>
+
+    <!-- Image -->
+    <img src="{{ image_path }}" alt="Uploaded Image">
+
+    <!-- Disease -->
+    <div class="box">
+        🦠 Disease: <b>{{ prediction }}</b><br><br>
+        📊 Confidence: <b>{{ confidence }}%</b>
+    </div>
+
+    <!-- Treatment -->
+    <div class="box">
+        💊 Medicine: <b>{{ treatment }}</b><br><br>
+        📏 Dose: <b>{{ dose }}</b>
+    </div>
+
+{% if product %}
+<div class="box">
+    <h3>🛒 Recommended Product</h3>
+
+    <img src="{{ url_for('static', filename=product.image) }}">
+
+    <b>{{ product.name }}</b><br>
+    <p>{{ product.type }}</p>
+
+    <span style="color:green; font-size:18px;">₹{{ product.price }}</span>
+
+    <!-- Buttons -->
+    <div class="btn-group">
+        <button>Buy Now</button>
+
+        <button onclick="addToCart('{{ product.id }}')">
+            🛒 Add to Cart
+        </button>
+
+        <a href="/pay/{{ product.price }}" style="width:100%;">
+            <button class="full-btn">💳 Pay Now</button>
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- QR Payment -->
+<div class="box">
+    <h3>📱 Scan & Pay</h3>
+
+    <img src="/static/upi_qr.png" width="200"><br><br>
+
+    <a href="upi://pay?pa=yourupi@upi&pn=KrishiVisionAI&am={{ product.price }}&cu=INR">
+        <button>💳 Pay via UPI</button>
+    </a>
+
+    <p>UPI (GPay / PhonePe / Paytm)</p>
+</div>
+<!-- Voice -->
+<button class="full-btn" onclick="speakResult()">🔊 Play Voice</button>
+
+<!-- Back -->
+<form action="/">
+    <button class="full-btn" type="submit">🔄 Try Another</button>
+</form>
+
+</div>
+
+<!-- JS -->
+<script>
+function addToCart(id) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(id);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to cart ✅");
+}
+
+function speakResult() {
+    let text = "रोग आहे {{ prediction }}. औषध आहे {{ treatment }}.";
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "mr-IN";
+    window.speechSynthesis.speak(speech);
+}
+</script>
+
+</body>
+</html>

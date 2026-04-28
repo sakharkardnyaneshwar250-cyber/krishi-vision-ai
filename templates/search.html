@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Search Results - Krishi Vision AI</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.header {
+    background: #2e7d32;
+    color: white;
+    padding: 15px;
+}
+
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+/* Product Card */
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+}
+
+.price {
+    color: green;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: none;
+    background: #2e7d32;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #1b5e20;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>🔍 Search Results</h2>
+</div>
+
+<div class="container">
+
+{% if results %}
+    {% for p in results %}
+    <div class="card">
+        
+        <!-- Image -->
+        <img src="{{ url_for('static', filename=p.image) }}">
+
+        <!-- Name -->
+        <h3>{{ p.name }}</h3>
+
+        <!-- Type -->
+        <p>{{ p.type }}</p>
+
+        <!-- Price -->
+        <div class="price">₹{{ p.price }}</div>
+
+        <!-- Buttons -->
+        <button class="btn">Buy Now</button>
+
+        <button class="btn" onclick="addToCart('{{ p.id }}')">
+            🛒 Add to Cart
+        </button>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No results found 😔</p>
+{% endif %}
+
+<!-- Back -->
+<a href="/">
+    <button class="btn">⬅ Back to Home</button>
+</a>
+
+</div>
+
+<script>
+function addToCart(id) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(id);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to cart ✅");
+}
+</script>
+
+</body>
+</html>
