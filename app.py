@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 import numpy as np
 import os
-from tensorflow.keras.models import load_model
 import razorpay
 import requests
 app = Flask(__name__)
@@ -61,11 +60,6 @@ products = [
 UPLOAD_FOLDER = "static/uploads"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# ---------- LOAD MODELS ----------
-cotton_model = load_model("cotton_model.h5")
-soyabean_model = load_model("soyabean_model.h5")
-wheat_model = load_model("wheat_model.h5")
 
 # ---------- CLASS LABELS ----------
 cotton_classes = [
