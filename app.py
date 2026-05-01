@@ -2,20 +2,12 @@ from flask import Flask, render_template, request
 import numpy as np
 import os
 import razorpay
-import requests
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+
 app = Flask(__name__)
 
 client = razorpay.Client(auth=("rzp_test_SifWo24DcJ7yuT", "iqd4FlZKPXFMutoA19Rhgitd"))
-
-API_URL = "https://api-inference.huggingface.co/models/nateraw/vit-base-beans"
-headers = {"Authorization": "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"}
-
-def query(filename):
-    with open(filename, "rb") as f:
-        data = f.read()
-    response = requests.post(API_URL, headers=headers, data=data)
-    return response.json()
-
 
 # ---------- PRODUCTS ----------
 products = [
@@ -60,6 +52,11 @@ products = [
 UPLOAD_FOLDER = "static/uploads"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# ---------- LOAD MODELS ----------
+cotton_model = load_model("cotton_model.h5")
+soyabean_model = load_model("soyabean_model.h5")
+wheat_model = load_model("wheat_model.h5")
 
 # ---------- CLASS LABELS ----------
 cotton_classes = [
@@ -301,5 +298,7 @@ def pay(amount):
         "payment_capture": 1
     })
     return render_template("pay.html", order=order)
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+if __name__ == '__main__':
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
