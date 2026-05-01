@@ -16,8 +16,6 @@ def query(filename):
     response = requests.post(API_URL, headers=headers, data=data)
     return response.json()
 
-output = query("test.jpg")
-print(output)
 
 # ---------- PRODUCTS ----------
 products = [
