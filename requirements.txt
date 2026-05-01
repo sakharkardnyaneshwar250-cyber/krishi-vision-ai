@@ -3,3 +3,4 @@ numpy
 pillow
 razorpay
 requests
+tensorflow-cpu
