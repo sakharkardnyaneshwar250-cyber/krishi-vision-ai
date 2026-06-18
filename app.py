@@ -2,7 +2,29 @@ from flask import Flask, render_template, request
 import numpy as np
 import os
 import razorpay
+import gdown
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
 
+def download_model(file_id, output):
+    if not os.path.exists(output):
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output, quiet=False)
+
+download_model(
+    "126ezHa2dN8skLr1usgJnsbkDhSum0wkX",
+    "cotton_model.h5"
+)
+
+download_model(
+    "1s9cFujAi9_MQZ2KhTVlNyTZuWqrbdj1B",
+    "soyabean_model.h5"
+)
+
+download_model(
+    "10u6Gau3KQsy6VWWnC37ksNjjHdevgnTC",
+    "wheat_model.h5"
+)
 app = Flask(__name__)
 
 client = razorpay.Client(auth=("rzp_test_SifWo24DcJ7yuT", "iqd4FlZKPXFMutoA19Rhgitd"))
@@ -50,6 +72,28 @@ products = [
 UPLOAD_FOLDER = "static/uploads"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# ---------- LOAD MODELS ----------
+# ---------- DOWNLOAD MODELS ----------
+def download_model(file_id, output):
+    if not os.path.exists(output):
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output, quiet=False)
+
+download_model(
+    "126ezHa2dN8skLr1usgJnsbkDhSum0wkX",
+    "cotton_model.h5"
+)
+
+download_model(
+    "1s9cFujAi9_MQZ2KhTVlNyTZuWqrbdj1B",
+    "soyabean_model.h5"
+)
+
+download_model(
+    "10u6Gau3KQsy6VWWnC37ksNjjHdevgnTC",
+    "wheat_model.h5"
+)
 
 # ---------- LOAD MODELS ----------
 cotton_model = load_model("cotton_model.h5")
